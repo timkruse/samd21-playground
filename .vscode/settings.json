@@ -1,0 +1,7 @@
+{
+	"cmake.configureArgs": [
+		"-DGCC_PREFIX=/Users/tim/Applications/arm-dev/gcc-arm-none-eabi-9-2020-q2-update", 
+		"-DASF_PREFIX=/Users/tim/Applications/arm-dev/xdk-asf-3.45.0"
+	],
+	"cmake.preferredGenerators": ["Ninja"]
+}

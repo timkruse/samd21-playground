@@ -1,0 +1,9 @@
+[
+	{
+		"name": "gcc-arm-none-eabi-9-2020-q2-update",
+		"compilers": {
+		  "C": "/Users/tim/Applications/arm-dev/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-gcc",
+		  "CXX": "/Users/tim/Applications/arm-dev/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++"
+		}
+	  }
+]
