@@ -10,6 +10,7 @@ if (GCC_PREFIX STREQUAL "")
 else ()
 	# set(CMAKE_C_COMPILER ${GCC_PREFIX}/bin/arm-none-eabi-gcc)
 	# set(CMAKE_CXX_COMPILER ${GCC_PREFIX}/bin/arm-none-eabi-g++)
+	set(CMAKE_SIZE ${GCC_PREFIX}/bin/arm-none-eabi-size)
 	SET(CMAKE_C_ARCHIVE_CREATE "<CMAKE_AR> qcs --plugin=$$(${CMAKE_C_COMPILER} --print-file-name=liblto_plugin.so) <TARGET> <LINK_FLAGS> <OBJECTS>")
 	SET(CMAKE_C_ARCHIVE_FINISH   true)
 	SET(CMAKE_CXX_ARCHIVE_CREATE "<CMAKE_AR> qcs --plugin=$$(${CMAKE_CXX_COMPILER} --print-file-name=liblto_plugin.so) <TARGET> <LINK_FLAGS> <OBJECTS>")
@@ -53,6 +54,8 @@ string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CUSTOM_COMPILER_FLAGS} ${CUSTOM_CXX_FL
 
 project(samd21playground)
 
+set(TARGET samd21playground)
+
 add_library(samd21core STATIC 
 	${ASF_PREFIX}/sam0/utils/cmsis/samd21/source/gcc/startup_samd21.c
 	${ASF_PREFIX}/sam0/utils/cmsis/samd21/source/system_samd21.c
@@ -64,13 +67,18 @@ target_include_directories(samd21core PUBLIC
 	${ASF_PREFIX}/sam0/utils/cmsis/samd21/include
 )
 
-add_executable(samd21playground 
+add_executable(${TARGET} 
 	main.cpp 
 )
-target_include_directories(samd21playground PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_compile_features(samd21playground PRIVATE cxx_std_11)
+target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_features(${TARGET} PRIVATE cxx_std_11)
+target_link_options(${TARGET} PUBLIC "LINKER:--static,--script,${ASF_PREFIX}/sam0/utils/linker_scripts/samd21/gcc/samd21j18a_flash.ld,-Map,${TARGET}.map,--cref,--gc-sections")
 
 add_subdirectory(samd21driver)
 
 target_link_libraries(samd21driver PRIVATE samd21core)
-target_link_libraries(samd21playground PRIVATE samd21driver samd21core)
+target_link_libraries(${TARGET} PRIVATE samd21driver samd21core)
+
+add_custom_command(TARGET ${TARGET} POST_BUILD COMMAND ${CMAKE_NM} --demangle --format=sysv --print-size ${TARGET} > ${TARGET}.nm)
+add_custom_command(TARGET ${TARGET} POST_BUILD COMMAND ${CMAKE_SIZE} ${TARGET} > ${TARGET}.size)
+add_custom_command(TARGET ${TARGET} POST_BUILD COMMAND ${CMAKE_SIZE} --format=sysv --radix=16 ${TARGET} >> ${TARGET}.size)
