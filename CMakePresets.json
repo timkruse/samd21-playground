@@ -1,0 +1,16 @@
+{
+    "version": 2,
+    "configurePresets": [
+      {
+        "name": "ninja",
+        "displayName": "Ninja Config",
+        "description": "Build using Ninja",
+        "generator": "Ninja",
+        "hidden": true,
+        "binaryDir": "build/${presetName}",
+        "cacheVariables": {
+        }
+      }
+    ]
+  }
+  
